@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sovereign Food Menu</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+  <style>
+    :root {
+      --main-color: #ffb26b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #0f0f0f, #1c1c1c);
+      color: white;
+      padding: 2rem;
+      overflow-x: hidden;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+      color: var(--main-color);
+      text-shadow: 0 0 10px #ffb26b88;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .menu-icon {
+      font-size: 2rem;
+      color: var(--main-color);
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .menu-icon:hover {
+      transform: scale(1.1);
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: -410px;
+      width: 410px;
+      height: 100%;
+      background-color: #1a1a1a;
+      box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+      padding: 2rem;
+      transition: left 0.3s ease;
+      z-index: 999;
+    }
+
+    .side-menu.open {
+      left: 0;
+    }
+
+    .side-menu h3 {
+      color: var(--main-color);
+      margin-bottom: 1rem;
+    }
+
+    .side-menu ul {
+      list-style: none;
+    }
+
+    .side-menu ul li {
+      padding: 0.8rem 0;
+      border-bottom: 1px solid #333;
+      color: white;
+      cursor: pointer;
+    }
+
+    #searchInput {
+      width: 100%;
+      max-width: 400px;
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #2c2c2c;
+      color: white;
+      font-size: 1rem;
+      outline: none;
+      box-shadow: 0 0 10px rgba(255, 178, 107, 0.3);
+    }
+
+    #searchInput::placeholder {
+      color: #aaa;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 2rem;
+    }
+
+    .card {
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(255, 178, 107, 0.15);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(255, 178, 107, 0.4);
+    }
+
+    .card img {
+      width: 100%;
+      object-fit: cover;
+      scale: 0.7;
+    }
+
+    .card hr {
+      border: none;
+      height: 3.4px;
+      background-color: var(--main-color);
+      opacity: .1;
+      margin: 0;
+    }
+
+    .info {
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .info h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #ffffff;
+    }
+
+    .info p {
+      color: var(--main-color);
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    #loginForm input {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.5rem;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+
+    #loginForm button {
+      width: 100%;
+      margin-top: 1rem;
+      padding: 0.6rem;
+      background-color: var(--main-color);
+      border: none;
+      color: #000;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    #loginForm button:hover {
+      background-color: #ffa759;
+    }
+
+    .admin-icons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    .admin-icons i {
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: var(--main-color);
+      transition: 0.2s;
+    }
+
+    .admin-icons i:hover {
+      color: #fff;
+    }
+
+    #noResults {
+      display: none;
+      text-align: center;
+      margin-top: 2rem;
+      color: var(--main-color);
+      font-weight: bold;
+    }
+
+    .on-sale {
+  border: 2px solid rgb(98, 9, 255);
+  box-shadow: 0 0 15px rgb(98, 0, 255);
+  transform: scale(1.03);
+}
+
+.sale-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgb(98, 0, 255);
+  color: white;
+  font-weight: bold;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  z-index: 10;
+}
+
+.sale-badge {
+  animation: pulseGlow 1.5s infinite;
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 rgba(98,0,255,0.5);  color:white;}
+  50% { box-shadow: 0 0 12px rgba(98,0,255,0.7);color: red; }
+  100% { box-shadow: 0 0 0 rgba(98,0,255,0.5); color: white; }
+}
+
+
+.unavailable-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #777;
+  color: white;
+  font-weight: bold;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  z-index: 10;
+  
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(6px);
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  width: 100px;
+  height: 100px;
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.5s, opacity 1s;
+  pointer-events: none;
+}
+
+.card:active::after {
+  transform: scale(3);
+  opacity: 1;
+  left: var(--tap-x);
+  top: var(--tap-y);
+}
+
+
+.card.unavailable {
+  opacity: 0.5 !important;
+  filter: grayscale(100%) !important;
+  pointer-events: none !important;
+}
+
+header {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 2rem 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  border-radius: 40px;
+}
+
+
+@keyframes rotateBorder {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+#loader {
+  position: fixed;
+  inset: 0;
+  background: #0f0f0f;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transition: opacity 0.4s ease;
+}
+
+.loader-logo {
+  width: 300px;
+  animation: rotatePulse 2s infinite ease-in-out;
+}
+
+@keyframes rotatePulse {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(0.9); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+*{
+  text-decoration: none;
+}
+
+a{
+  color: white;
+  font-style: italic;
+
+}
+
+.loader-bar {
+  width: 50vw;
+  height: 6px;
+  background: #333;
+  margin-top: 20px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.loader-progress {
+  width: 0%;
+  height: 100%;
+  background: var(--main-color);
+  animation: fillBar 2s linear forwards;
+}
+
+@keyframes fillBar {
+  to {
+    width: 100%;
+  }
+}
+
+#bgParticles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -10;
+  pointer-events: none;
+}
+.tag-icon {
+  font-size: 1.8rem;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 8px;
+  border-radius: 10px;
+  background-color: #1a1a1a;
+}
+
+.tag-icon.active {
+  color: var(--main-color);
+  background-color: #333;
+  box-shadow: 0 0 10px var(--main-color);
+}
+
+ul li{
+  font-size: 1.3em;
+  font-style: italic;
+  font-family: 'Courier New', Courier, monospace;
+}
+:root {
+  --main-bg: #0f0f0f;
+  --text-color: white;
+  --card-bg: #1c1c1c;
+}
+
+[data-theme="light"] {
+  --main-bg: #f9f9f9;
+  --text-color: #111;
+  --card-bg: #fff;
+}
+
+body {
+  background-color: var(--main-bg);
+  color: var(--text-color);
+  transition: background 0.3s, color 0.3s;
+}
+
+.card {
+  background-color: var(--card-bg);
+  transition: background 0.3s;
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  margin-left: auto;
+  margin-right: 10px;
+}
+.switch input { display: none; }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  background-color: #ccc;
+  border-radius: 30px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: .4s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+input:checked + .slider {
+  background-color: var(--main-color);
+}
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+
+#cartModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  background: #1c1c1c;
+  color: white;
+  padding: 1.5rem;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 400px;
+  z-index: 9999;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  border: 2px solid var(--main-color);
+  box-shadow: 0 0 25px var(--main-color);
+}
+
+#cartModal.active {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: all;
+}
+
+#viewOrderBtn {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  z-index: 9999;
+  padding: 0.8rem 1.2rem;
+  background-color: var(--main-color);
+  border: none;
+  color: black;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+
+  </style>
+</head>
+<body>
+    <canvas id="bgParticles"></canvas>
+
+<div id="loader">
+  <div class="loader-content">
+    <img src="logo.png" alt="Loading..." class="loader-logo" />
+    <div class="loader-bar">
+      <div class="loader-progress"></div>
+    </div>
+  </div>
+</div>
+<div id="addNotification" style="position: fixed; bottom: 50vh; left: 50%; transform: translateX(-50%) scale(0.9); background: #111; color: white; padding: 0.8rem 1.2rem; border-radius: 10px; font-weight: bold; box-shadow: 0 0 15px rgba(0,0,0,0.4); opacity: 0; z-index: 9999; transition: all 0.3s ease;"> 333 Item added to order</div>
+  <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.1); backdrop-filter: blur(15px);" class="side-menu" id="sideMenu">
+    <h3>Menu</h3>
+    <div id="contactPopup" style="
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  background-color: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
+  padding: 2rem ;
+  border-radius: 20px;
+  
+  z-index: 9999;
+  width: 90%;
+  max-width: 400px;
+  
+  transition: all 0.3s ease;
+  text-align: left;
+">
+  <h3 style="color: var(--main-color); margin-bottom: 1rem;">Contact Us</h3>
+  <p style="margin-bottom: 0.5rem;"><i style="position: relative; margin-right: 10px;" class="bi bi-telephone-fill"></i>
+ +20 102 555 7341</p>
+  <p style="margin-bottom: 0.5rem;"><i style="position: relative; margin-right: 10px;" class="bi bi-telephone-fill"></i>
+ +20 111 332 8809</p>
+  <p style="margin-bottom: 0.5rem;"><i style="position: relative; margin-right: 10px;" class="bi bi-envelope-fill"></i>
+ contact@sovereigngrill.com</p>
+  <p style="margin-bottom: 1rem;"><i style="position: relative; margin-right: 10px;" class="bi bi-geo-alt-fill"></i>
+ 5th Settlement, New Cairo</p>
+  <button id="closePopup" style="
+    padding: 0.5rem 1rem;
+    background-color: var(--main-color);
+    border: none;
+    color: black;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+  ">Close</button>
+</div>
+
+    <ul style=" display: flex; flex-direction: column; gap: 30px;">
+      <li><a href="index.html">Home</a></li>
+      <li id="contactBtn"><a href="#">Contact</a></li>
+
+     
+      
+      <li id="loginBtn">Login as Admin</li> <br>
+      <label class="switch">
+  <input type="checkbox" id="themeToggle">
+  <span class="slider"></span>
+</label>
+
+      <button id="addItemBtn" style="display:none; background-color: #1a1a1a; padding: 5px 15px; border: 0px; border-radius: 7px; color: white; font-style: italic; font-weight:bold ;">+ Add New Item</button>
+
+    </ul>
+    <div id="addItemContainer" style="display:none; margin-bottom: 2rem; text-align: center;">
+  <button id="addItemBtn" style="background-color: var(--main-color); color: black; padding: 0.6rem 1rem; font-weight: bold; border: none; border-radius: 8px; cursor: pointer;">+ Add Item</button>
+
+  <form id="addForm" style="display:none; margin-top:1rem;" enctype="multipart/form-data">
+    <input type="text" id="newTitle" placeholder="Item title" required style="padding: 0.6rem; margin: 0.5rem; border-radius: 6px; border: none; background-color: #333; color: white;" />
+    <input type="text" id="newPrice" placeholder="Item price" required style="padding: 0.6rem; margin: 0.5rem; border-radius: 6px; border: none; background-color: #333; color: white;" />
+    <input type="file" id="newImg" accept="image/*" required style="margin: 0.5rem;" />
+    <button type="submit" style="padding: 0.6rem 1rem; background-color: var(--main-color); border: none; color: black; font-weight: bold; border-radius: 6px; cursor: pointer;">Add</button>
+  </form>
+</div>
+
+    <div id="loginForm" style="display:none; margin-top:2rem;">
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
+      <button id="submitLogin">Login</button>
+      <p id="loginError" style="color: red; font-size: 0.9rem; margin-top: 0.5rem;"></p>
+    </div>
+  </div>
+
+  <header>
+    <h1><i class="bi bi-list menu-icon" id="menuBtn"></i> <img style="width: 300px;" src="logo2.png" alt=""></h1>
+    <input type="text" id="searchInput" placeholder="Search menu..." /> <button id="addItemBtn" style="display:none;">➕ Add New Item</button>
+    <div id="tagFilters" style="display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap;">
+  <i class="fas fa-seedling tag-icon" data-tag="healthy" title="Drinks"></i>
+ 
+  <i class="fas fa-hamburger tag-icon" data-tag="burgers" title="Burgers"></i>
+  <i class="fas fa-pizza-slice tag-icon" data-tag="pizza" title="Pizza"></i>
+
+   <i class="fas fa-pepper-hot tag-icon" data-tag="spicy" title="Pizza"></i>
+
+    <i class="fas fa-snowflake tag-icon" data-tag="cold" title="Pizza"></i>
+
+     <i class="fas fa-drumstick-bite tag-icon" data-tag="chicken" title="Pizza"></i>
+</div>
+
+
+  </header>
+
+  <main class="menu-grid">
+    <p id="noResults">No results found.</p>
+
+    <!-- All cards below -->
+   
+
+    <!-- Add more cards the same way, with admin-icons inside -->
+  </main>
+
+
+<!-- ORDER MODAL -->
+<div id="cartModal">
+ <h2 style="text-align: center; color: var(--main-color); margin-bottom: 1rem;">🧾 Your Order</h2>
+<ul id="cartItems" style="list-style: none; padding: 0; margin: 0; max-height: 250px; overflow-y: auto;"></ul>
+<hr style="margin: 1rem 0; border: none; border-top: 2px solid #444;" />
+<p style="font-size: 1.2rem; font-weight: bold; text-align: center;">
+  Total: <span id="cartTotal" style="color: gold; font-size: 1.5rem;">$0.00</span>
+</p>
+
+</div>
+
+<!-- VIEW ORDER BUTTON -->
+<button style="font-size: 2em; border-radius: 30px;" id="viewOrderBtn"><i class="bi bi-cart"></i>
+</button>
+
+<div id="previewPanel">
+  <div class="preview-content">
+    <img id="previewImg" src="" />
+    <div class="preview-info">
+      <h2 id="previewTitle"></h2>
+      <p id="previewPrice"></p>
+      <p id="previewDesc"></p>
+    </div>
+  </div>
+</div>
+<audio id="popSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_d3c2d85e92.mp3?filename=pop-up-off-113132.mp3" preload="auto"></audio>
+
+
+  <style>
+    .editable-price{
+        font-size: 3rem;
+    }
+#previewPanel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #0f0f0f;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease;
+  padding: 2rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0 }
+  to { opacity: 1 }
+}
+
+.preview-content {
+  text-align: center;
+  max-width: 90%;
+}
+
+#previewPanel img {
+  max-width: 100%;
+  border-radius: 20px;
+  margin-bottom: 1rem;
+  box-shadow: 0 0 20px rgba(255,178,107,0.3);
+}
+
+.preview-info h2 {
+  color: var(--main-color);
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.preview-info p {
+  color: #ccc;
+  font-size: 1rem;
+  margin: 0.3rem 0;
+}
+
+#previewPanel::after {
+  content: "✕";
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 2rem;
+  color: var(--main-color);
+  cursor: pointer;
+}
+
+
+.popular-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: gold;
+  color: black;
+  font-weight: bold;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  z-index: 10;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.card.unavailable {
+  opacity: 0.5 !important;
+  filter: grayscale(100%) !important;
+  pointer-events: auto !important; /* ← Fix */
+}
+
+.card.unavailable .admin-icons {
+  pointer-events: auto !important; /* Make admin buttons work */
+}
+
+.favorite-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #aaa;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 20000;
+  transition: 0.2s;
+}
+
+.favorite-icon.active {
+  color: red;
+  text-shadow: 0 0 10px red;
+}
+
+
+
+
+
+  </style>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  onValue,
+  update,
+  remove,
+  push
+} from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBXR0zJrf3Sv9WM1KjkdDPGE6FZg6ZKMrQ",
+  authDomain: "foodmenuv1.firebaseapp.com",
+  projectId: "foodmenuv1",
+  storageBucket: "foodmenuv1.firebasestorage.app",
+  messagingSenderId: "918878972848",
+  appId: "1:918878972848:web:a3b6082b4e1320cb6a8475",
+  measurementId: "G-8WZ4MZHRVY",
+  databaseURL: "https://foodmenuv1-default-rtdb.europe-west1.firebasedatabase.app/"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// DOM Elements
+const menuBtn = document.getElementById('menuBtn');
+const sideMenu = document.getElementById('sideMenu');
+const loginBtn = document.getElementById('loginBtn');
+const loginForm = document.getElementById('loginForm');
+const submitLogin = document.getElementById('submitLogin');
+const loginError = document.getElementById('loginError');
+const searchInput = document.getElementById('searchInput');
+const main = document.querySelector('.menu-grid');
+const noResults = document.getElementById('noResults');
+const addItemBtn = document.getElementById('addItemBtn');
+
+
+let cart = {}; // cart[id] = { title, price, quantity }
+
+let isAdmin = false;
+let currentItems = {}; // map of id -> item
+let activeTags = new Set();
+
+
+function loadItems() {
+  const itemsRef = ref(db, 'menuItems');
+  onValue(itemsRef, (snapshot) => {
+    const data = snapshot.val();
+    main.innerHTML = '';
+    if (!data) {
+      noResults.style.display = 'block';
+      currentItems = {};
+      return;
+    }
+
+    noResults.style.display = 'none';
+    currentItems = data;
+
+    Object.entries(data).forEach(([id, item]) => {
+          const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+      const isFavorite = favorites.includes(id);
+
+      const card = document.createElement('div');
+      card.className = 'card';
+      if (item.onSale) card.classList.add('on-sale');
+      if (item.available === false) card.classList.add('unavailable');
+
+      card.innerHTML = `
+        ${item.onSale ? '<p class="sale-badge">ON SALE</p>' : ''}
+        ${item.available === false ? '<p class="unavailable-badge">UNAVAILABLE</p>' : ''}
+        <i class="bi bi-heart-fill fav-icon favorite-icon ${isFavorite ? 'active' : ''}" data-id="${id}"></i>
+        <img src="${item.img}" alt="${item.title}" class="card-img" data-id="${id}" />
+        <hr />
+        <div class="admin-icons" style="display: ${isAdmin ? 'flex' : 'none'}">
+          <i class="bi bi-pencil-square" data-id="${id}"></i>
+          <i class="bi bi-trash" data-id="${id}"></i>
+          <i class="bi bi-fire" title="Toggle Sale" data-id="${id}"></i>
+          <i class="bi bi-x-circle" title="Toggle Availability" data-id="${id}"></i>
+        </div>
+        <div class="info">
+          <h2 class="editable-title" contenteditable="false">${item.title}</h2>
+          <p class="editable-price" contenteditable="false">${item.price}</p>
+          <input type="file" accept="image/*" style="display:none" class="img-input" data-id="${id}" />
+        </div>
+      `;
+if (item.available !== false) {
+  const addToCartBtn = document.createElement('button');
+  addToCartBtn.innerHTML = '<i class="bi bi-cart-plus-fill"></i>';
+
+  addToCartBtn.style.cssText = 'position:absolute; bottom:17.5px; right:10px; background:transparent; color:var(--main-color); border:none; padding:0.5rem 0.8rem; border-radius:50%; font-size:2em; font-weight:bold; cursor:pointer;';
+  addToCartBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+     // 🔥 ADD THIS LINE RIGHT HERE
+    addToCartBtn.style.animation = 'cartPop 0.4s ease';
+    setTimeout(() => addToCartBtn.style.animation = '', 400);
+
+    addToCart(id, item);
+  });
+  card.appendChild(addToCartBtn);
+}
+let clickTimeout;
+let clickCount = 0;
+
+card.addEventListener('click', (e) => {
+  // prevent conflicts with buttons/icons
+  if (e.target.tagName === 'BUTTON' || e.target.classList.contains('bi')) return;
+
+  clickCount++;
+
+  if (clickCount === 1) {
+    clickTimeout = setTimeout(() => {
+      // single click fallback (optional preview)
+      clickCount = 0;
+    }, 250);
+  } else if (clickCount === 2) {
+    clearTimeout(clickTimeout);
+    clickCount = 0;
+
+    // 🎯 TikTok heart animation
+    const heart = document.createElement('i');
+    heart.className = 'bi bi-heart-fill';
+    heart.style.cssText = `
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(1);
+      font-size: 3rem;
+      color: red;
+      opacity: 1;
+      animation: heartPop 0.8s ease-out forwards;
+      pointer-events: none;
+      z-index: 999;
+    `;
+    card.appendChild(heart);
+    setTimeout(() => heart.remove(), 800);
+
+    // 🧠 Toggle favorite programmatically
+    const favIcon = card.querySelector('.fav-icon');
+    favIcon.classList.toggle('favorited');
+
+    const itemId = favIcon.dataset.id;
+    if (favIcon.classList.contains('favorited')) {
+      localStorage.setItem(`fav-${itemId}`, 'true');
+    } else {
+      localStorage.removeItem(`fav-${itemId}`);
+    }
+  }
+});
+
+
+      main.appendChild(card);
+    });
+
+    addAdminEvents();
+    // 🔥 This goes AFTER all cards have been added to DOM
+document.querySelectorAll('.favorite-icon').forEach(fav => {
+  fav.addEventListener('click', (e) => {
+    e.stopPropagation(); // prevent triggering card click
+    const id = fav.dataset.id;
+    let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+    if (favorites.includes(id)) {
+      favorites = favorites.filter(f => f !== id);
+      fav.classList.remove('active');
+    } else {
+      favorites.push(id);
+      fav.classList.add('active');
+    }
+
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  });
+});
+
+  });
+
+  
+document.querySelectorAll('.tag-icon').forEach(icon => {
+  icon.addEventListener('click', () => {
+    const tag = icon.dataset.tag;
+    icon.classList.toggle('active');
+
+    if (activeTags.has(tag)) {
+      activeTags.delete(tag);
+    } else {
+      activeTags.add(tag);
+    }
+
+    filterByTags();
+  });
+});
+
+  
+}
+
+function addAdminEvents() {
+  document.querySelectorAll('.bi-pencil-square').forEach(editBtn => {
+    editBtn.addEventListener('click', () => {
+      const id = editBtn.dataset.id;
+      const card = editBtn.closest('.card');
+      const title = card.querySelector('.editable-title');
+      const price = card.querySelector('.editable-price');
+      const img = card.querySelector('.card-img');
+
+      title.setAttribute('contenteditable', 'true');
+      price.setAttribute('contenteditable', 'true');
+      title.focus();
+// Create tag editor
+const tagEditor = document.createElement('div');
+tagEditor.className = 'tag-editor';
+tagEditor.style.marginTop = '10px';
+tagEditor.style.display = 'flex';
+tagEditor.style.flexWrap = 'wrap';
+tagEditor.style.gap = '6px';
+
+const allTags = ["cold", "chicken", "burgers", "pizza" , "spicy" , "healthy"]; // Add more as needed
+const itemTags = currentItems[id].tags || [];
+
+allTags.forEach(tag => {
+  const tagBtn = document.createElement('span');
+  tagBtn.textContent = tag;
+  tagBtn.style.padding = '4px 10px';
+  tagBtn.style.borderRadius = '15px';
+  tagBtn.style.fontSize = '0.75rem';
+  tagBtn.style.cursor = 'pointer';
+  tagBtn.style.backgroundColor = itemTags.includes(tag) ? 'var(--main-color)' : '#333';
+  tagBtn.style.color = itemTags.includes(tag) ? 'black' : 'white';
+  tagBtn.setAttribute('data-tag', tag);
+
+  tagBtn.addEventListener('click', () => {
+    tagBtn.classList.toggle('active');
+    const current = tagBtn.style.backgroundColor === 'var(--main-color)';
+    if (current) {
+      tagBtn.style.backgroundColor = '#333';
+      tagBtn.style.color = 'white';
+    } else {
+      tagBtn.style.backgroundColor = 'var(--main-color)';
+      tagBtn.style.color = 'black';
+    }
+  });
+
+  tagEditor.appendChild(tagBtn);
+
+  document.querySelectorAll('.fav-icon').forEach(favIcon => {
+  const id = favIcon.dataset.id;
+  if (localStorage.getItem(`fav-${id}`)) {
+    favIcon.classList.add('favorited');
+  }
+
+  favIcon.addEventListener('click', (e) => {
+    e.stopPropagation();
+    favIcon.classList.toggle('favorited');
+
+    if (favIcon.classList.contains('favorited')) {
+      localStorage.setItem(`fav-${id}`, 'true');
+    } else {
+      localStorage.removeItem(`fav-${id}`);
+    }
+  });
+});
+
+});
+
+card.querySelector('.info').appendChild(tagEditor);
+
+      if (!card.querySelector('.bi-check-lg')) {
+        const confirmBtn = document.createElement('i');
+        confirmBtn.className = 'bi bi-check-lg';
+        confirmBtn.style.cursor = 'pointer';
+        confirmBtn.style.color = 'var(--main-color)';
+        confirmBtn.style.fontSize = '1.2rem';
+
+        confirmBtn.addEventListener('click', () => {
+        const selectedTags = Array.from(tagEditor.querySelectorAll('span'))
+  .filter(el => el.style.backgroundColor === 'var(--main-color)')
+  .map(el => el.dataset.tag);
+
+const updatedItem = {
+  ...currentItems[id],
+  title: title.textContent.trim(),
+  price: price.textContent.trim(),
+  tags: selectedTags
+};
+
+          update(ref(db, 'menuItems/' + id), updatedItem);
+        });
+
+        const imgIcon = document.createElement('i');
+        imgIcon.className = 'bi bi-image';
+        imgIcon.style.cursor = 'pointer';
+        imgIcon.style.color = 'var(--main-color)';
+        imgIcon.style.fontSize = '1.2rem';
+
+        imgIcon.addEventListener('click', () => {
+          const input = card.querySelector('.img-input');
+          input.click();
+        });
+
+        const fileInput = card.querySelector('.img-input');
+        fileInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+              const updatedItem = {
+                ...currentItems[id],
+                img: event.target.result
+              };
+              update(ref(db, 'menuItems/' + id), updatedItem);
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+
+        editBtn.parentNode.appendChild(confirmBtn);
+        editBtn.parentNode.appendChild(imgIcon);
+      }
+    });
+  });
+
+  document.querySelectorAll('.bi-trash').forEach(deleteBtn => {
+    deleteBtn.addEventListener('click', () => {
+      const id = deleteBtn.dataset.id;
+      if (confirm("Are you sure you want to delete this item?")) {
+        remove(ref(db, 'menuItems/' + id));
+      }
+    });
+  });
+
+  document.querySelectorAll('.bi-fire').forEach(saleBtn => {
+  saleBtn.addEventListener('click', () => {
+    const id = saleBtn.dataset.id;
+    const current = currentItems[id];
+    const newStatus = !current.onSale;
+    update(ref(db, 'menuItems/' + id), { onSale: newStatus });
+  });
+});
+
+document.querySelectorAll('.bi-x-circle').forEach(disableBtn => {
+  disableBtn.addEventListener('click', () => {
+    const id = disableBtn.dataset.id;
+    const current = currentItems[id];
+    const newStatus = !(current.available !== false); // flip it
+    update(ref(db, 'menuItems/' + id), { available: newStatus });
+  });
+});
+
+document.querySelectorAll('.bi-star-fill').forEach(starBtn => {
+  starBtn.addEventListener('click', () => {
+    const id = starBtn.dataset.id;
+    const current = currentItems[id];
+    const newStatus = !current.popular;
+    update(ref(db, 'menuItems/' + id), { popular: newStatus });
+  });
+});
+
+
+}
+
+menuBtn.addEventListener('click', () => {
+  sideMenu.classList.toggle('open');
+});
+
+document.addEventListener('click', (e) => {
+  if (!sideMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+    sideMenu.classList.remove('open');
+  }
+});
+
+loginBtn.addEventListener('click', () => {
+  loginForm.style.display = loginForm.style.display === 'none' ? 'block' : 'none';
+});
+
+submitLogin.addEventListener('click', () => {
+  const user = document.getElementById('username').value;
+  const pass = document.getElementById('password').value;
+
+  if (user === 'admin' && pass === '1234') {
+    isAdmin = true;
+    loginError.textContent = '';
+    loginForm.innerHTML = '<p style="color: var(--main-color); font-weight: bold;">Logged in as Admin</p>';
+    addItemBtn.style.display = 'block';
+    loadItems();
+  } else {
+    loginError.textContent = 'Invalid credentials.';
+  }
+});
+
+searchInput.addEventListener('input', () => {
+  const value = searchInput.value.toLowerCase();
+  let anyVisible = false;
+
+  document.querySelectorAll('.card').forEach(card => {
+    const title = card.querySelector('h2').textContent.toLowerCase();
+    const isMatch = title.includes(value);
+    card.style.display = isMatch ? 'block' : 'none';
+    if (isMatch) anyVisible = true;
+  });
+
+  noResults.style.display = anyVisible ? 'none' : 'block';
+});
+
+addItemBtn.addEventListener('click', () => {
+  const newItem = {
+    title: "New Item",
+    price: "$0.00",
+    img: "https://via.placeholder.com/150"
+  };
+  push(ref(db, 'menuItems'), newItem);
+});
+
+loadItems();
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('touchstart', e => {
+    const touch = e.touches[0];
+    const rect = card.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    card.style.setProperty('--tap-x', `${x}px`);
+    card.style.setProperty('--tap-y', `${y}px`);
+  });
+});
+const loader = document.getElementById('loader');
+const MIN_LOAD_TIME = 2600; // 2 seconds
+
+const startTime = Date.now();
+
+window.addEventListener('load', () => {
+  const elapsed = Date.now() - startTime;
+  const remaining = Math.max(0, MIN_LOAD_TIME - elapsed);
+
+  setTimeout(() => {
+    loader.style.opacity = '0';
+    setTimeout(() => loader.style.display = 'none', 400);
+  }, remaining);
+});
+
+
+const canvas = document.getElementById('bgParticles');
+const ctx = canvas.getContext('2d');
+
+let particles = [];
+const particleCount = 80;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function createParticles() {
+  particles = [];
+  for (let i = 0; i < particleCount; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 2 + 1,
+      dx: (Math.random() - 0.5) * 0.5,
+      dy: (Math.random() - 0.5) * 0.5,
+      opacity: Math.random() * 0.5 + 0.5
+    });
+  }
+}
+createParticles();
+
+function drawParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let p of particles) {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255, 215, 0, ${p.opacity})`; // gold color
+    ctx.shadowColor = "rgba(255, 215, 0, 0.4)";
+    ctx.shadowBlur = 10;
+    ctx.fill();
+
+    p.x += p.dx;
+    p.y += p.dy;
+
+    // Bounce off edges
+    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+  }
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+function filterByTags() {
+  document.querySelectorAll('.card').forEach(card => {
+    const id = card.querySelector('.card-img').dataset.id;
+    const item = currentItems[id];
+
+    if (activeTags.size === 0) {
+      card.style.display = 'block';
+      return;
+    }
+
+    const itemTags = item.tags || [];
+    const matches = [...activeTags].some(tag => itemTags.includes(tag));
+    card.style.display = matches ? 'block' : 'none';
+  });
+
+  const visibleCards = Array.from(document.querySelectorAll('.card')).filter(c => c.style.display !== 'none');
+  noResults.style.display = visibleCards.length === 0 ? 'block' : 'none';
+}
+const contactBtn = document.getElementById('contactBtn');
+const contactPopup = document.getElementById('contactPopup');
+const closePopup = document.getElementById('closePopup');
+
+contactBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  contactPopup.style.display = 'block';
+  setTimeout(() => {
+    contactPopup.style.transform = 'translate(-50%, -50%) scale(1)';
+    contactPopup.style.opacity = '1';
+  }, 10);
+});
+
+closePopup.addEventListener('click', () => {
+  contactPopup.style.transform = 'translate(-50%, -50%) scale(0.8)';
+  contactPopup.style.opacity = '0';
+  setTimeout(() => {
+    contactPopup.style.display = 'none';
+  }, 300);
+});
+
+const themeToggle = document.getElementById('themeToggle');
+
+// Load preference
+if (localStorage.getItem("theme") === "light") {
+  document.documentElement.setAttribute("data-theme", "light");
+  themeToggle.checked = true;
+}
+
+themeToggle.addEventListener("change", () => {
+  if (themeToggle.checked) {
+    document.documentElement.setAttribute("data-theme", "light");
+    localStorage.setItem("theme", "light");
+  } else {
+    document.documentElement.setAttribute("data-theme", "dark");
+    localStorage.setItem("theme", "dark");
+  }
+});
+
+document.querySelectorAll('.favorite-icon').forEach(fav => {
+  fav.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const id = fav.dataset.id;
+    let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+    const sound = document.getElementById('popSound');
+
+    if (favorites.includes(id)) {
+      favorites = favorites.filter(f => f !== id);
+      fav.classList.remove('active');
+    } else {
+      favorites.push(id);
+      fav.classList.add('active');
+
+      sound.currentTime = 0;
+      sound.play().catch(err => {
+        console.warn("Audio not played:", err);
+      });
+    }
+
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  });
+});
+
+function addToCart(id, item) {
+  if (!cart[id]) {
+    cart[id] = {
+      title: item.title,
+      price: parseFloat(item.price.replace(/[^\d.]/g, '')),
+      quantity: 1
+    };
+  } else {
+    cart[id].quantity++;
+  }
+
+  updateCartUI();
+  showAddNotification();
+}
+function showAddNotification() {
+  const note = document.getElementById('addNotification');
+  note.style.opacity = '1';
+  note.style.transform = 'translateX(-50%) scale(1.05)';
+ note.innerHTML = '<i class="bi bi-check-circle-fill" style="color: limegreen; margin-right: 6px;"></i>Item added to order';
+
+  setTimeout(() => {
+    note.style.opacity = '0';
+    note.style.transform = 'translateX(-50%) scale(0.9)';
+  }, 1200);
+}
+
+
+function updateCartUI() {
+  const cartItems = document.getElementById('cartItems');
+  const cartTotal = document.getElementById('cartTotal');
+  cartItems.innerHTML = '';
+  let total = 0;
+
+  Object.entries(cart).forEach(([id, item], index, arr) => {
+    const itemTotal = item.price * item.quantity;
+    total += itemTotal;
+
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <div style="margin-bottom: 0.5rem;">
+        <span style="display: block; font-weight: bold; font-size: 1rem; color: white;">${item.title}</span>
+        <span style="display: block; color: #ffb26b; font-size: 0.95rem;">
+          ${item.quantity} x $${item.price.toFixed(2)} = $${itemTotal.toFixed(2)}
+        </span>
+      </div>
+    `;
+
+    cartItems.appendChild(li);
+
+    // Add HR except after last item
+    if (index !== arr.length - 1) {
+      const hr = document.createElement('hr');
+      hr.style.border = 'none';
+      hr.style.borderTop = '1px solid #333';
+      hr.style.margin = '0.5rem 0';
+      cartItems.appendChild(hr);
+    }
+  });
+
+  cartTotal.textContent = `$${total.toFixed(2)}`;
+}
+
+
+document.getElementById('viewOrderBtn').addEventListener('click', () => {
+  const modal = document.getElementById('cartModal');
+  modal.classList.toggle('active');
+});
+
+
+// Close cart modal if clicking outside of it
+document.addEventListener('click', (e) => {
+  const modal = document.getElementById('cartModal');
+  const viewBtn = document.getElementById('viewOrderBtn');
+  if (
+    modal.classList.contains('active') &&
+    !modal.contains(e.target) &&
+    !viewBtn.contains(e.target)
+  ) {
+    modal.classList.remove('active');
+  }
+});
+
+// Feeling Tag Clicks — Triggers Actual Tag Icons
+document.querySelectorAll('.feelingTag').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tag = btn.dataset.tag;
+
+    // Trigger click on the real tag icon
+    const matchingIcon = document.querySelector(`.tag-icon[data-tag="${tag}"]`);
+    if (matchingIcon) matchingIcon.click();
+
+    // Hide the popup
+    document.getElementById('feelingPopup').style.transform = 'translate(-50%, -50%) scale(0)';
+  });
+});
+
+
+document.addEventListener('touchstart', function(e) {
+  const sparkle = document.createElement('div');
+  sparkle.className = 'tap-sparkle';
+  sparkle.style.left = `${e.touches[0].clientX - 10}px`;
+  sparkle.style.top = `${e.touches[0].clientY - 10}px`;
+
+  document.body.appendChild(sparkle);
+
+  setTimeout(() => sparkle.remove(), 600);
+}, { passive: true });
+
+
+
+</script>
+<style>* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-focus-ring-color: transparent;
+  outline: none;
+}
+
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800,
+    easing: 'ease-in-out',
+    once: true,
+    mirror: false
+  });
+</script>
+
+<div id="itemPreview" style="display:none;">
+  <div id="previewOverlay"></div>
+  <div id="previewContent">
+    <span id="closePreview">&times;</span>
+    <img id="previewImg" />
+    <h2 id="previewTitle"></h2>
+    <p id="previewDesc">Description goes here...</p>
+    <p id="previewPrice"></p>
+  </div>
+</div>
+<audio id="popSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_d3c2d85e92.mp3?filename=pop-up-off-113132.mp3" preload="auto"></audio>
+
+<style>
+  @keyframes cartPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+
+@keyframes heartPop {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
+
+.tap-sparkle {
+  position: fixed;
+  width: 45px;
+  height:45px;
+  pointer-events: none;
+  background: radial-gradient(circle, #aa3e00 20%, transparent 70%);
+  border-radius: 50%;
+  animation: sparkleAnim 1.2s forwards;
+  z-index: 9999;
+}
+
+@keyframes sparkleAnim {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  20%{
+background: radial-gradient(circle, #db5800 20%, transparent 70%);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(3);
+  }
+}
+
+.card{
+  background-color: rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(7px);
+}
+
+</style>
+
+<div id="friendlyPopup" style="position: fixed; bottom: 30px; right: 30px; background: #1c1c1c; color: white; padding: 1rem 1.2rem; border-radius: 12px; box-shadow: 0 0 20px rgba(255,255,255,0.1); z-index: 9999; display: none; transition: transform 0.3s ease, opacity 0.3s ease;">
+  <p style="margin: 0; font-size: 1rem;">Struggling to decide what to eat? <span id="openFeeling" style="color: var(--main-color); font-weight: bold; cursor: pointer;">Check this</span></p>
+</div>
+
+<!-- BIG FEELING POPUP -->
+<div id="feelingPopup" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); background: #1a1a1a; padding: 2rem; border-radius: 20px; z-index: 10000; color: white; box-shadow: 0 0 25px rgba(0,0,0,0.6); width: 90%; max-width: 400px; text-align: center; transition: transform 0.4s ease;">
+  <h3 style="color: var(--main-color); margin-bottom: 1rem;">What are you feeling like eating today?</h3>
+  <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 1rem;">
+    <button class="feelingTag" data-tag="spicy" style="background: #ff4d4d; border: none; color: white; padding: 0.6rem 1.2rem; border-radius: 10px; font-weight: bold;">🌶️ Spicy</button>
+    <button class="feelingTag" data-tag="cold" style="background: #00ccff; border: none; color: white; padding: 0.6rem 1.2rem; border-radius: 10px; font-weight: bold;">❄️ Cold</button>
+    <button class="feelingTag" data-tag="pizza" style="background: #ffaa33; border: none; color: white; padding: 0.6rem 1.2rem; border-radius: 10px; font-weight: bold;">🍕 Pizza</button>
+    <button class="feelingTag" data-tag="healthy" style="background: #66cc66; border: none; color: white; padding: 0.6rem 1.2rem; border-radius: 10px; font-weight: bold;">🥗 Healthy</button>
+  </div>
+</div>
+
+</body>
+</html>
